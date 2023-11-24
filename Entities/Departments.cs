@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Entities
 {
-    public class Departments: Employee
+    public class Departments
     {
         private string department;
 

@@ -47,7 +47,7 @@ namespace Project2
                     bool isEmailValid = Utilities.IsValidEmail(email);
                     bool isPhoneNumberValid = Utilities.IsValidNigerianPhoneNumber(phoneNumber);
                     bool isEmailExist = db.ExistingEmail(email);
-                    if (!isEmailValid || !isPhoneNumberValid)
+                    if (!isEmailValid || !isPhoneNumberValid || !int.TryParse(salary, out _))
                     {
                         if (!isEmailValid)
                         {
@@ -68,9 +68,19 @@ namespace Project2
                         {
                             errorPhoneNumber.Visible = false;
                         }
+                        if(!int.TryParse(salary, out _))
+                        {
+                            errorSalary.Text = "Enter a valid integer";
+                            errorSalary.Visible = true;
+                        }
+                        else
+                        {
+                            errorSalary.Visible = false;
+                        }
                     }
                     else
                     {
+                        errorSalary.Visible = false;
                         errorLabel.Visible = false;
                         errorPhoneNumber.Visible = false;
                         db.DeleteEmployee(email);
@@ -128,7 +138,7 @@ namespace Project2
                         departmentTextBox.Text = particularEmployee.Department;
                         salaryTextBox.Text = particularEmployee.Salary;
 
-                        
+
                     }
                     else
                     {
@@ -140,6 +150,6 @@ namespace Project2
             {
                 MessageBox.Show("Employee not found");
             }
-}
+        }
     }
 }

@@ -11,9 +11,10 @@ namespace DataAccess
 {
     public class DataAccess
     {
-        public List<Employee> employee  = new List<Employee>();
+        public List<Employee> employee  = new List<Employee>();  
         private static string directory = @"C:\Users\BJ\Documents\C# projects";
         private static string fileName = "Employee.txt";
+        private static string departmentFileName = "Department.txt";
 
         public void RegisterEmployee(Employee employees)
         {
@@ -31,6 +32,18 @@ namespace DataAccess
                 sb.Append($"Department:{employees.Department} ;");
                 sb.Append($"Salary:{employees.Salary} ;");
 
+                writer.WriteLine(sb.ToString());
+            }
+        }
+
+        public void AddDepartment(Departments department)
+        {
+            string path = $"{directory}{departmentFileName}";
+
+            using(StreamWriter writer = new(path, append: true))
+            {
+                StringBuilder sb = new();
+                sb.Append($"Department:{department.Department};");
                 writer.WriteLine(sb.ToString());
             }
         }
@@ -124,6 +137,28 @@ namespace DataAccess
             return null;
         }
 
+        private Departments ConstructDepartmentFromLine(string[] segments)
+        {
+            Departments departments = new();
+            foreach(string segment in segments)
+            {
+                string[] parts = segment.Split(':');
+                if (parts.Length == 2)
+                {
+                    string key = parts[0].Trim();
+                    string value = parts[1].Trim();
+
+                    switch (key)
+                    {
+                        case "Department":
+                            departments.Department = value;
+                            break;
+                    }
+                }
+            }
+            return departments;
+        }
+
         private Employee ConstructEmployeeFromLine(string[] segments)
         {
             Employee employee = new Employee();
@@ -167,6 +202,68 @@ namespace DataAccess
             return employee;
         }
 
+        public Dictionary<decimal, List<Employee>> GroupBySalary()
+        {
+            List<Employee> employees = viewAllEmployees();
+
+            var filteredEmployees = employees.Where(emp =>
+            {
+                if (decimal.TryParse(emp.Salary, out decimal salary))
+                {
+                    return salary >= 150000 && salary <= 300000;
+                }
+                return false; // Salary parsing failed or not in the valid range
+            });
+
+            var groupBySalary = filteredEmployees
+                .GroupBy(emp =>
+                {
+                    // Convert Salary string to decimal for grouping
+                    return decimal.Parse(emp.Salary);
+                })
+                .ToDictionary(g => g.Key, g => g.ToList());
+
+            return groupBySalary;
+        }
+
+        public List<string> EmployeesWithNoDepartment()
+        {
+            List<string> employeeWithoutDepartent = new List<string>();
+            List<string> departentWithoutEmployee = new List<string>();
+            List<Employee> employees = viewAllEmployees();
+            List<Departments> departments = viewAllDepartment();
+
+            /*var employeeWithNoDepartment = employees.Where(emp => !departments.Any(dep => dep.Department == emp.Department));*/
+            var departmentWithNoEmployee = departments.Where(dep => !employees.Any(emp => emp.Department == dep.Department));
+            foreach (var dep in departmentWithNoEmployee)
+            {
+                departentWithoutEmployee.Add(dep.Department);
+            }
+            return departentWithoutEmployee;
+        }
+        public List<string> GroupByDepartment()
+        {
+            List<string> employeeWithDepartent = new List<string>();
+            List<Employee> employees = viewAllEmployees();
+            List<Departments> departments = viewAllDepartment();
+
+            foreach(var deparment in departments)
+            {
+
+                var employeeInDepratment = employees.Where(emp => emp.Department == deparment.Department).ToList();
+
+                if (employeeInDepratment.Any())
+                {
+                    employeeWithDepartent.Add(deparment.Department);
+                    foreach(var emp in employeeInDepratment)
+                    {
+                        employeeWithDepartent.Add($"{emp.FirstName}");
+                    }
+                    employeeWithDepartent.Add("");     
+                }
+            }
+            return employeeWithDepartent;
+        }
         public List<Employee> viewAllEmployees()
         {
             string path = $"{directory}{fileName}";
@@ -185,13 +282,119 @@ namespace DataAccess
                     string[] employeeSplit = line.Split(';');
                     Employee employees = ConstructEmployeeFromLine(employeeSplit);
                     employee.Add(employees);
-
                 }
             }
 
             return employee;
         }
 
-        
+        public List<Departments> viewAllDepartment()
+        {
+            string path = $"{directory}{departmentFileName}";
+            if (!File.Exists(path))
+            {
+                throw new Exception("Department not found");
+            }
+
+            List<Departments> departments = new List<Departments>();
+            using (StreamReader reader = new StreamReader(path))
+            {
+                string line;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    string[] departmentSplit = line.Split(';');
+                    Departments department = ConstructDepartmentFromLine(departmentSplit);
+                    departments.Add(department);
+
+                }
+            }
+
+            return departments;
+        }
+
+        public List<string> GetAllDepartments()
+        {
+            string path = $"{directory}{departmentFileName}";
+
+            if (!File.Exists(path))
+            {
+                throw new FileNotFoundException("Departments file not found.");
+            }
+
+            List<string> departments = new List<string>();
+
+            using (StreamReader reader = new StreamReader(path))
+            {
+                string line;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    departments.Add(line);
+                }
+            }
+
+            return departments;
+        }
+
+
+        public void UpdateDepartmentInEmployee(string email, string department)
+        {
+            string path = $"{directory}{fileName}";
+            string tempFile = $"{directory}temp_{fileName}";
+
+            if (!File.Exists(path))
+            {
+                throw new FileNotFoundException("Employee file not found.");
+            }
+
+            bool updated = false;
+
+            using (StreamReader reader = new StreamReader(path))
+            using (StreamWriter writer = new StreamWriter(tempFile, false))
+            {
+                string line;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    string[] employeeSplit = line.Split(';');
+                    string splitEmail = employeeSplit.FirstOrDefault(e => e.Trim().StartsWith("Email:", StringComparison.OrdinalIgnoreCase));
+
+                    string splitDepartment = employeeSplit.FirstOrDefault(e => e.Trim().StartsWith("Department:", StringComparison.OrdinalIgnoreCase));
+
+                    if (splitEmail != null)
+                    {
+                        string emailPart = splitEmail.Substring("Email:".Length).Trim();
+
+                        if (emailPart.Equals(email, StringComparison.OrdinalIgnoreCase))
+                        {
+                            if(splitDepartment != null)
+                            {
+                                //replace existing department
+                                string updatedLine = line.Replace(splitDepartment, $"Department:{department}");
+                                writer.WriteLine(updatedLine);
+                            }
+                            else
+                            {
+                                //if no department exist add it
+                                writer.WriteLine($"{line};Department:{department}");
+                            }
+                            updated = true;
+                            continue;
+                        }
+                    }
+
+                    writer.WriteLine(line);
+                }
+            }
+
+            if (updated)
+            {
+                File.Delete(path);
+                File.Move(tempFile, path);
+            }
+            else
+            {
+                File.Delete(tempFile);
+            }
+        }
+
     }
 }

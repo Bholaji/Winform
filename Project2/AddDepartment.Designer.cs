@@ -31,9 +31,6 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AddDepartment));
             button2 = new Button();
             backButtonRegisterPage = new Button();
-            textBox1 = new TextBox();
-            label1 = new Label();
-            button1 = new Button();
             textBox2 = new TextBox();
             label2 = new Label();
             emailLabel = new Label();
@@ -44,12 +41,13 @@
             // 
             button2.BackgroundImage = (Image)resources.GetObject("button2.BackgroundImage");
             button2.Font = new Font("Times New Roman", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            button2.Location = new Point(80, 304);
+            button2.Location = new Point(81, 139);
             button2.Name = "button2";
             button2.Size = new Size(109, 28);
             button2.TabIndex = 38;
             button2.Text = "Submit";
             button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click;
             // 
             // backButtonRegisterPage
             // 
@@ -62,38 +60,9 @@
             backButtonRegisterPage.UseVisualStyleBackColor = true;
             backButtonRegisterPage.Click += backButtonRegisterPage_Click;
             // 
-            // textBox1
-            // 
-            textBox1.Location = new Point(80, 98);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(309, 23);
-            textBox1.TabIndex = 36;
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Font = new Font("Times New Roman", 14.25F, FontStyle.Bold, GraphicsUnit.Point);
-            label1.Location = new Point(80, 52);
-            label1.Name = "label1";
-            label1.Size = new Size(430, 22);
-            label1.TabIndex = 35;
-            label1.Text = "Enter Employee email to change or add department";
-            // 
-            // button1
-            // 
-            button1.BackgroundImage = (Image)resources.GetObject("button1.BackgroundImage");
-            button1.Font = new Font("Times New Roman", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            button1.Location = new Point(80, 137);
-            button1.Name = "button1";
-            button1.Size = new Size(109, 28);
-            button1.TabIndex = 41;
-            button1.Text = "Submit";
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += button1_Click;
-            // 
             // textBox2
             // 
-            textBox2.Location = new Point(80, 260);
+            textBox2.Location = new Point(80, 94);
             textBox2.Name = "textBox2";
             textBox2.Size = new Size(309, 23);
             textBox2.TabIndex = 40;
@@ -102,7 +71,7 @@
             // 
             label2.AutoSize = true;
             label2.Font = new Font("Times New Roman", 14.25F, FontStyle.Bold, GraphicsUnit.Point);
-            label2.Location = new Point(80, 214);
+            label2.Location = new Point(80, 51);
             label2.Name = "label2";
             label2.Size = new Size(168, 22);
             label2.TabIndex = 39;
@@ -131,16 +100,13 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(192, 0, 192);
-            ClientSize = new Size(600, 390);
+            ClientSize = new Size(518, 217);
             Controls.Add(departmentLabel);
             Controls.Add(emailLabel);
-            Controls.Add(button1);
             Controls.Add(textBox2);
             Controls.Add(label2);
             Controls.Add(button2);
             Controls.Add(backButtonRegisterPage);
-            Controls.Add(textBox1);
-            Controls.Add(label1);
             ForeColor = Color.Yellow;
             Name = "AddDepartment";
             Text = "AddDepartment";
@@ -152,12 +118,10 @@
 
         private Button button2;
         private Button backButtonRegisterPage;
-        private TextBox textBox1;
-        private Label label1;
-        private Button button1;
         private TextBox textBox2;
         private Label label2;
         private Label emailLabel;
         private Label departmentLabel;
+        private DataGridView dataGridView;
     }
 }

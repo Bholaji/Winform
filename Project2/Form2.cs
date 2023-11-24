@@ -53,7 +53,7 @@ namespace Project2
                     bool isEmailValid = Utilities.IsValidEmail(email);
                     bool isPhoneNumberValid = Utilities.IsValidNigerianPhoneNumber(phoneNumber);
                     bool isEmailExist = db.ExistingEmail(email);
-                    if (!isEmailValid || !isPhoneNumberValid || isEmailExist)
+                    if (!isEmailValid || !isPhoneNumberValid || isEmailExist || !int.TryParse(salary, out _))
                     {
                         if (!isEmailValid)
                         {
@@ -84,9 +84,19 @@ namespace Project2
                         {
                             errorLabel.Visible = false;
                         }
+                        if (!int.TryParse(salary, out _))
+                        {
+                            errorSalary.Text = "Enter a valid integer";
+                            errorSalary.Visible = true;
+                        }
+                        else
+                        {
+                            errorSalary.Visible = false;
+                        }
                     }
                     else
                     {
+                        errorSalary.Visible = false;
                         errorLabel.Visible = false;
                         errorPhoneNumber.Visible = false;
                         db.RegisterEmployee(new Employee

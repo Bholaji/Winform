@@ -53,6 +53,7 @@
             errorPhoneNumber = new Label();
             errorEmailValid = new Label();
             label10 = new Label();
+            errorSalary = new Label();
             SuspendLayout();
             // 
             // button2
@@ -272,12 +273,22 @@
             label10.Size = new Size(0, 15);
             label10.TabIndex = 40;
             // 
+            // errorSalary
+            // 
+            errorSalary.AutoSize = true;
+            errorSalary.ForeColor = Color.Red;
+            errorSalary.Location = new Point(187, 326);
+            errorSalary.Name = "errorSalary";
+            errorSalary.Size = new Size(0, 15);
+            errorSalary.TabIndex = 41;
+            // 
             // UpdatePage
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(192, 0, 192);
             ClientSize = new Size(882, 373);
+            Controls.Add(errorSalary);
             Controls.Add(label10);
             Controls.Add(errorEmailValid);
             Controls.Add(errorPhoneNumber);
@@ -340,5 +351,6 @@
         private Label errorPhoneNumber;
         private Label errorEmailValid;
         private Label label10;
+        private Label errorSalary;
     }
 }

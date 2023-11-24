@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Entities;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -28,34 +29,34 @@ namespace Project2
 
         private void button1_Click(object sender, EventArgs e)
         {
-            string email = textBox1.Text;
-            string department = textBox2.Text;
 
-            var particularEmployee = db.GetEmployeeByEmail(email);
+        }
 
-            if (!string.IsNullOrEmpty(email))
+        private void button2_Click(object sender, EventArgs e)
+        {
+            try
             {
-                bool isEmailValid = Utilities.IsValidEmail(email);
-                bool isEmailExist = db.ExistingEmail(email);
+                string department = textBox2.Text;
 
-                if (!isEmailValid)
+                if (!string.IsNullOrEmpty(department))
                 {
-                    emailLabel.Text = "Invalid Email!";
-                    emailLabel.Visible = true;
+
+
+                    db.AddDepartment(new Departments
+                    {
+                        Department = department
+                    });
+                    MessageBox.Show("Department added to employee successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 else
                 {
-                    emailLabel.Visible = false;
-
-                    if (isEmailExist)
-                    {
-                        textBox2.Text = particularEmployee.Department;
-                    }
-                    else
-                    {
-                        MessageBox.Show("Email does not exist");
-                    }
+                    MessageBox.Show("Please enter email and department.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }
